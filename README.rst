@@ -7,6 +7,45 @@ The main idea is this: stop copying and pasting random code from the web to your
 
 Also, `Daguhh <http://github.com/Daguhh>`_ made a GUI to generate the configs! `ConkyLuaMakerGUIv2 <https://github.com/Daguhh/ConkyLuaMakerGUIv2>`_
 
+The GUI is not compatible with this version of conky-draw!
+
+Changes:
+--------
+
+- The elements ``ring`` and ``ring_graph`` now include the functionality of ``ellipse`` and ``ellipse_graph``. This is accomplished by providing elements of the kinds ``ring`` and ``ring_graph`` with a major and minor radius.
+
+  .. code:: lua
+    {
+        kind = 'ring_graph',
+        radius = {a = 50, b=25},
+    },
+
+    -- this sytnax is recognized as well:
+    {
+        kind = 'ring_graph',
+        radius = {50, 25},
+    },
+
+- There is only an element of the kind ``text``, that replaces ``text_static`` and ``text_variable``. There has to be either a ``text`` or a ``conky_value`` entry. The properties of ``text`` differ significantly from both:
+
+  .. code:: lua
+    {
+        kind = 'text',
+        text = 'Sample text.',  -- use conky_value = 'cpu' for variable text
+        rotation_angle = 90,  -- rotation in degrees
+        alignement = {
+            horizontal = 'left',  -- possible values are 'left', 'center', 'right'
+            vertical = 'top',  -- possible values are 'top', 'middle', 'bottom'
+        }
+        prefix = '',  -- this and suffix are mostly useful to display conky_values with units
+        suffix = '',
+    }
+
+- The (not implemented) element kind ``clock`` is not longer available.
+
+- Background values are not set as defaults but instead are derived from the elements colors. So it isn't necessary to specify them explicitely.
+
+
 Examples
 --------
 
@@ -40,9 +79,6 @@ Normal vs critical mode. You can even decide what changes when critical values a
         from = {x = 50, y = 120},
         to = {x = 120, y = 45},
 
-        background_thickness = 5,
-        background_color = 0x00E5FF,
-
         bar_thickness = 5,
         bar_color = 0x00E5FF,
 
@@ -70,9 +106,6 @@ Idem with graduation
         from = {x = 50, y = 120},
         to = {x = 120, y = 45},
 
-        background_thickness = 5,
-        background_color = 0x00E5FF,
-
         bar_thickness = 5,
         bar_color = 0x00E5FF,
 
@@ -86,10 +119,9 @@ Idem with graduation
 
         bar_color_critical = 0xFF0000,
         bar_thickness_critical = 13,
-
-	graduated= true,
-	number_graduation= 30,
-	space_between_graduation=2,
+        graduated= true,
+        number_graduation= 30,
+        space_between_graduation=2,
     },
 
     
@@ -119,12 +151,12 @@ Ring with graduation
        conky_value = 'fs_used_perc /home/',
        radius = 30,
        graduated = true,
-       number_graduation=40,
-       angle_between_graduation=3,
+       number_graduationi = 40,
+       angle_between_graduation = 3,
        start_angle = 0,
        end_angle = 360,
-       color= 0xFF6600,
-       background_color= 0xD75600,
+       color = 0xFF6600,
+       background_color = 0xD75600,
    },
     
 .. image:: ./samples/sample4.png
@@ -162,7 +194,6 @@ Or even ring fragments.
         center = {x = 75, y = 100},
         radius = 30,
 
-        background_color = 0xFFFFFF,
         background_alpha = 0.7,
         background_thickness = 2,
 
@@ -181,28 +212,24 @@ Simple and graduated ellipse_graph
 .. code:: lua
 
   {
-       kind = 'ellipse_graph',
+       kind = 'ring_graph',
        center = {x = 10, y = 10},
        conky_value = 'fs_used_perc /home/',
-       radius = 5,
-       width= 10,
-       height= 20,
+       radius = {10, 20},
        graduated = true,
-       number_graduation=40,
+       number_graduation = 40,
        angle_between_graduation=3,
        start_angle = 0,
        end_angle = 360,
-       color= 0xFF6600,
-       background_color= 0xD75600,
+       color = 0xFF6600,
+       background_color = 0xD75600,
    },
 
    {
-       kind = 'ellipse_graph',
+       kind = 'ct_ringellipse_graph',
        center = {x = 30, y = 10},
        conky_value = 'fs_used_perc /home/',
-       radius = 5,
-       width= 10,
-       height= 20,
+       radius = {a = 20, b = 10}
        start_angle = 0,
        end_angle = 360,
        color= 0xFF6600,
@@ -252,8 +279,8 @@ But first, some general notions on the values of properties.
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 | If the property is a...| This is what you should know                                                                                                                       |
 +========================+====================================================================================================================================================+
-| point                  | Its value should be something with x and y values.                                                                                                 |
-|                        | Example: ``from = {x=100, y=100}``                                                                                                                 |
+| point                  | Its value should be something with x and y valuesi.                                                                                                 |
+|                        | Example: ``from = {x = 100, y = 100}``                                                                                                                 |
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 | color                  | Its value should be a color in hexa.                                                                                                               |
 |                        | Example (red): ``color = 0xFF0000``                                                                                                                |
