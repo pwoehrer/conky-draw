@@ -423,28 +423,29 @@ ring_graph:
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | A ring graph (can be a section of the ring too) able to display a value from conky, and optionaly able to change appearance when the value hits a "critical" threshold. |
 | It's composed of two rings, one for the background, and the other to represent the current value of the conky stat.                                                     |
++================================+========================================================================================================================================+
+| center (required)              | The center point of the ring.                                                                                                          |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| center (required)              | The center point of the ring.                                                                                                           |
-+--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| radius (required)              | The radius of the ring. Can be specified as a single radius (for a circle) or a pair of radii or a table {a = .., b = ..} (ellipse).  |
+| radius (required)              | The radius of the ring. Can be specified as a single radius (for a circle) or a pair of radii or a                                     |
+|                                | table ``{a = .., b = ..}`` (ellipse).                                                                                                  |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | conky_value (required)         | Conky value to use on the graph.                                                                                                       |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | max_value and                  | For the conky value being used on the graph.                                                                                           |
-| critical_threshold             |                                                                                                                                         |
+| critical_threshold             |                                                                                                                                        |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| background_color,              | For the appearance of the background of the graph in normal conditions.                                                                 |
-| background_alpha and           |                                                                                                                                         |
-| background_thickness           |                                                                                                                                         |
+| background_color,              | For the appearance of the background of the graph in normal conditions.                                                                |
+| background_alpha and           |                                                                                                                                        |
+| background_thickness           |                                                                                                                                        |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | bar_color, bar_alpha and       | For the appearance of the bar of the graph in normal conditions.                                                                       |
-| bar_thickness                  |                                                                                                                                         |
+| bar_thickness                  |                                                                                                                                        |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| change_color_on_critical,      | Booleans to control wether the color, alpha and thickness of both background and bar changes when the critical value is reached.   |
-| change_alpha_on_critical and   |                                                                                                                                         |
-| change_thickness_on_critical   |                                                                                                                                         |
+| change_color_on_critical,      | Booleans to control wether the color, alpha and thickness of both background and bar changes when the critical value is reached.       |
+| change_alpha_on_critical and   |                                                                                                                                        |
+| change_thickness_on_critical   |                                                                                                                                        |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| background_color_critical,     | For the appearance of the background of the graph when the value is above critical threshold.                                         |
+| background_color_critical,     | For the appearance of the background of the graph when the value is above critical threshold.                                          |
 | background_alpha_critical and  |                                                                                                                                        |
 | background_thickness_critical  |                                                                                                                                        |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
@@ -456,12 +457,12 @@ ring_graph:
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | end_angle                      | Angle at which the arc ends. Useful to limit the ring to just a section of the circle.                                                 |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| *Extra tip*: start_angle and end_angle can be swapped, to produce oposite arcs. If you don't understand this, just try what happens with this two examples:          |
+| *Extra tip*: start_angle and end_angle can be swapped, to produce oposite arcs. If you don't understand this, just try what happens with this two examples:             |
 |                                                                                                                                                                         |
 | * ``start_angle=90, end_angle=180``                                                                                                                                     |
 | * ``start_angle=180, end_angle=90``                                                                                                                                     |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| graduated                      | specify if the element is  graduated.                                                                                                   |
+| graduated                      | specify if the element is  graduated.                                                                                                  |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | number_graduation              | specify the number of  graduation.                                                                                                     |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
@@ -478,7 +479,7 @@ text:
 | from (required)                | A point where the text should start.                                                                                                   |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | text, conky-value              | Displayed text                                                                                                                         |
-| (mutual optional               |                                                                                                                                         |
+| (mutual optional)              |                                                                                                                                         |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | color                          | Color of the text.                                                                                                                     |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
