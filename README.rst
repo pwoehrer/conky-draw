@@ -47,6 +47,8 @@ Changes:
     }
 
 
+.. image:: /samples/text.png
+
 - The (not implemented) element kind ``clock`` is not longer available.
 
 - Background values are not set as defaults but instead are derived from the elements colors. So it isn't necessary to specify them explicitely.
@@ -213,7 +215,7 @@ Or even ring fragments.
 
 .. image:: ./samples/ellipse.png
 
-Simple and graduated ellipse_graph 
+Simple and graduated ellipse using ring_graph 
 
 .. code:: lua
 
@@ -232,7 +234,7 @@ Simple and graduated ellipse_graph
    },
 
    {
-       kind = 'ct_ringellipse_graph',
+       kind = 'ring_graph',
        center = {x = 30, y = 10},
        conky_value = 'fs_used_perc /home/',
        radius = {a = 20, b = 10}
