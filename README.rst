@@ -15,7 +15,7 @@ Changes:
 - The elements ``ring`` and ``ring_graph`` now include the functionality of ``ellipse`` and ``ellipse_graph``. This is accomplished by providing elements of the kinds ``ring`` and ``ring_graph`` with a major and minor radius.
 
 
-.. code:: lua
+.. code::lua
     {
         kind = 'ring_graph',
         radius = {a = 50, b=25},
@@ -31,7 +31,7 @@ Changes:
 - There is only an element of the kind ``text``, that replaces ``text_static`` and ``text_variable``. There has to be either a ``text`` or a ``conky_value`` entry. The properties of ``text`` differ significantly from both:
 
 
-.. code:: lua
+.. code::lua
     {
         kind = 'text',
         text = 'Sample text.',  -- use conky_value = 'cpu' for variable text
@@ -429,20 +429,20 @@ ring_graph:
 | conky_value (required)         | Conky value to use on the graph.                                                                                                       |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | max_value and                  | For the conky value being used on the graph.                                                                                           |
-| critical_threshold             |                                                                                                                                        |
+| critical_threshold             |                                                                                                                                         |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| background_color,              | For the appearance of the background of the graph in normal conditions.                                                                |
-| background_alpha and           |                                                                                                                                        |
-| background_thickness           |                                                                                                                                        |
+| background_color,              | For the appearance of the background of the graph in normal conditions.                                                                 |
+| background_alpha and           |                                                                                                                                         |
+| background_thickness           |                                                                                                                                         |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | bar_color, bar_alpha and       | For the appearance of the bar of the graph in normal conditions.                                                                       |
-| bar_thickness                  |                                                                                                                                        |
+| bar_thickness                  |                                                                                                                                         |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| change_color_on_critical,      | Booleans to control wether the color, alpha and thickness of both background and bar changes when the critical value is reached.       |
-| change_alpha_on_critical and   |                                                                                                                                        |
-| change_thickness_on_critical   |                                                                                                                                        |
+| change_color_on_critical,      | Booleans to control wether the color, alpha and thickness of both background and bar changes when the critical value is reached.   |
+| change_alpha_on_critical and   |                                                                                                                                         |
+| change_thickness_on_critical   |                                                                                                                                         |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| background_color_critical,     | For the appearance of the background of the graph when the value is above critical threshold.                                          |
+| background_color_critical,     | For the appearance of the background of the graph when the value is above critical threshold.                                         |
 | background_alpha_critical and  |                                                                                                                                        |
 | background_thickness_critical  |                                                                                                                                        |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
@@ -454,12 +454,12 @@ ring_graph:
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | end_angle                      | Angle at which the arc ends. Useful to limit the ring to just a section of the circle.                                                 |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| *Extra tip*: start_angle and end_angle can be swapped, to produce oposite arcs. If you don't understand this, just try what happens with this two examples:             |
+| *Extra tip*: start_angle and end_angle can be swapped, to produce oposite arcs. If you don't understand this, just try what happens with this two examples:          |
 |                                                                                                                                                                         |
 | * ``start_angle=90, end_angle=180``                                                                                                                                     |
 | * ``start_angle=180, end_angle=90``                                                                                                                                     |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| graduated                      | specify if the element is  graduated.                                                                                                  |
+| graduated                      | specify if the element is  graduated.                                                                                                   |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | number_graduation              | specify the number of  graduation.                                                                                                     |
 +--------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
