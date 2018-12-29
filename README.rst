@@ -15,7 +15,8 @@ Changes:
 - The elements ``ring`` and ``ring_graph`` now include the functionality of ``ellipse`` and ``ellipse_graph``. This is accomplished by providing elements of the kinds ``ring`` and ``ring_graph`` with a major and minor radius.
 
 
-.. code::lua
+.. code:: lua
+
     {
         kind = 'ring_graph',
         radius = {a = 50, b=25},
@@ -31,7 +32,8 @@ Changes:
 - There is only an element of the kind ``text``, that replaces ``text_static`` and ``text_variable``. There has to be either a ``text`` or a ``conky_value`` entry. The properties of ``text`` differ significantly from both:
 
 
-.. code::lua
+.. code:: lua
+
     {
         kind = 'text',
         text = 'Sample text.',  -- use conky_value = 'cpu' for variable text
