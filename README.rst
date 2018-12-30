@@ -38,7 +38,7 @@ Changes:
         kind = 'text',
         text = 'Sample text.',  -- use conky_value = 'cpu' for variable text
         rotation_angle = 90,  -- rotation in degrees
-        alignement = {
+        alignment = {
             horizontal = 'left',  -- possible values are 'left', 'center', 'right'
             vertical = 'top',  -- possible values are 'top', 'middle', 'bottom'
         }
@@ -247,7 +247,6 @@ Simple and graduated ellipse using ring_graph
 
 Right now you can define bar and ring graphs, and static lines and rings. Plans for the future:
 
-* Draw text elements (on arbitrary positions/areas, not like traditional conkyrc).
 * More basic elements: filled circles, rectangles, ...
 * Other more complex visual elements (example: clocks)
 
@@ -329,9 +328,10 @@ But first, some general notions on the values of properties.
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 + radius                 + The value can be a single number or a table consisting of a major and minor diameter. The table can be spcified with or without indices.           +
 |                        | Example: ``radius = 50               -- this will draw a circle with the radius of 50 pixels``                                                     |
++                        +                                                                                                                                                    +
 |                        |          ``radius = {30, 50}         -- this will draw an ellipse with a radius of 30 pixels along the x axes and one of 50 pixels on the y axes`` |
++                        +                                                                                                                                                    +
 |                        |          ``radius = {a = 30, b = 50} -- the same as the above with conventional naming of the radii``                                              |
-+------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Now, the elements and properties
 --------------------------------
