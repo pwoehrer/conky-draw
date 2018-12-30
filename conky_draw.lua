@@ -165,37 +165,30 @@ local function draw_line(display, element)
   -- draw a line
 
   -- deltas for x and y (cairo expects a point and deltas for both axis)
-  local x_side = element.to.x - element.from.x -- not abs! because they are deltas
-  local y_side = element.to.y - element.from.y -- and the same here
+  local x_side = element.to.x - element.from.x  -- not abs! because they are deltas
+  local y_side = element.to.y - element.from.y  -- and the same here
   local from_x = element.from.x
   local from_y = element.from.y
 
-  if not element.graduated then
-    -- draw line
-    cairo_set_source_rgba(display, hexa_to_rgb(element.color, element.alpha))
-    cairo_set_line_width(display, element.thickness);
-    cairo_move_to(display, element.from.x, element.from.y);
-    cairo_rel_line_to(display, x_side, y_side);
-  else
-    division_by_zero({
-      number_graduation = element.number_graduation,
-      space_between_graduation = element.space_between_graduation})
+  -- draw line
+  division_by_zero({
+    number_graduation = element.number_graduation,
+    space_between_graduation = element.space_between_graduation})
 
-    -- draw graduated line
-    cairo_set_source_rgba(display, hexa_to_rgb(element.color, element.alpha))
-    cairo_set_line_width(display, element.thickness);
-    local space_graduation_x = (x_side-x_side / element.space_between_graduation + 1) / element.number_graduation
-    local space_graduation_y = (y_side-y_side / element.space_between_graduation + 1) / element.number_graduation
-    local space_x = x_side / element.number_graduation - space_graduation_x
-    local space_y = y_side / element.number_graduation - space_graduation_y
+  cairo_set_source_rgba(display, hexa_to_rgb(element.color, element.alpha))
+  cairo_set_line_width(display, element.thickness);
+  local space_graduation_x = (x_side - x_side / element.space_between_graduation + 1) / element.number_graduation
+  local space_graduation_y = (y_side - y_side / element.space_between_graduation + 1) / element.number_graduation
+  local space_x = x_side / element.number_graduation - space_graduation_x
+  local space_y = y_side / element.number_graduation - space_graduation_y
 
-    for _ = 1, element.number_graduation do
-      cairo_move_to(display, from_x, from_y)
-      from_x = from_x + space_x + space_graduation_x
-      from_y = from_y + space_y + space_graduation_y
-      cairo_rel_line_to(display, space_x, space_y)
-    end
+  for _ = 1, math.floor(element.number_graduation + 0.5) do
+    cairo_move_to(display, from_x, from_y)
+    from_x = from_x + space_x + space_graduation_x
+    from_y = from_y + space_y + space_graduation_y
+    cairo_rel_line_to(display, space_x, space_y)
   end
+
   cairo_stroke(display)
 end
 
@@ -226,63 +219,43 @@ local function draw_bar_graph(display, element)
     element.change_thickness_on_critical
   )
 
+  -- derive sensible defaults for background from elements settings
+  local color = element['background_color' .. critical_or_not_suffix.color] or
+      element['bar_color' .. critical_or_not_suffix.color]
+  local alpha = element['background_alpha' .. critical_or_not_suffix.alpha] or
+      element['bar_alpha' .. critical_or_not_suffix.alpha] / 5
+  local thickness = element['background_thickness' .. critical_or_not_suffix.thickness] or
+      element['bar_thickness' .. critical_or_not_suffix.thickness]
+
   -- background line (full graph)
   local background_line = {
     from = element.from,
     to = element.to,
 
-    color = element['background_color' .. critical_or_not_suffix.color],
-    alpha = element['background_alpha' .. critical_or_not_suffix.alpha],
-    thickness = element['background_thickness' .. critical_or_not_suffix.thickness],
+    color = color,
+    alpha = alpha,
+    thickness = thickness,
+
     graduated = element.graduated,
     number_graduation = element.number_graduation,
     space_between_graduation = element.space_between_graduation,
-  }
-  local bar_line = {
-    from = element.from,
-    to = {
-      x = element.from.x + bar_x_side,
-      y = element.from.y + bar_y_side
-    },
-    color = element['bar_color' .. critical_or_not_suffix.color],
-    alpha = element['bar_alpha' .. critical_or_not_suffix.alpha],
-    thickness = element['bar_thickness' .. critical_or_not_suffix.thickness],
   }
 
   -- draw background lines
   draw_line(display, background_line)
 
-  if element.graduated then
-    division_by_zero({
-      number_graduation = element.number_graduation,
-      space_between_graduation = element.space_between_graduation})
+  -- draw bar line
+  -- reuse common settings from background_line
+  local bar_line = background_line
+  bar_line.from = element.from
+  bar_line.to = {x = element.from.x + bar_x_side, y = element.from.y + bar_y_side}
+  bar_line.number_graduation = math.max(element.number_graduation * (value / element.max_value), 1)
 
-    -- draw bar line if graduated
-    cairo_set_source_rgba(display, hexa_to_rgb(bar_line.color, bar_line.alpha))
-    cairo_set_line_width(display, bar_line.thickness);
-    local from_x = bar_line.from.x
-    local from_y = bar_line.from.y
-    local space_graduation_x = (x_side-x_side / element.space_between_graduation + 1) / element.number_graduation
-    local space_graduation_y = (y_side-y_side / element.space_between_graduation + 1) / element.number_graduation
-    local space_x = x_side / element.number_graduation - space_graduation_x
-    local space_y = y_side / element.number_graduation - space_graduation_y
+  bar_line.color = element['bar_color' .. critical_or_not_suffix.color]
+  bar_line.alpha = element['bar_alpha' .. critical_or_not_suffix.alpha]
+  bar_line.thickness = element['bar_thickness' .. critical_or_not_suffix.thickness]
 
-    local number_of_bars_to_fill = math.floor(value / element.max_value * element.number_graduation)
-
-    if math.floor(number_of_bars_to_fill) > 0 then
-      for _ = 1, number_of_bars_to_fill do
-        cairo_move_to(display, from_x, from_y)
-        from_x = from_x + space_x + space_graduation_x
-        from_y = from_y + space_y + space_graduation_y
-        cairo_rel_line_to(display, space_x, space_y)
-      end
-    end
-
-    cairo_stroke(display)
-  else
-    -- draw bar line if not graduated
-    draw_line(display, bar_line);
-  end
+  draw_line(display, bar_line)
 end
 
 
@@ -381,6 +354,7 @@ local function draw_ring_graph(display, element)
       element['bar_alpha' .. critical_or_not_suffix.alpha] / 5
   local thickness = element['background_thickness' .. critical_or_not_suffix.thickness] or
       element['bar_thickness' .. critical_or_not_suffix.thickness]
+
   local background_ring = {
     center = element.center,
     radius = element.radius,
@@ -434,7 +408,7 @@ end
 -- values
 local requirements = {
   line = {'from', 'to'},
-  bar_graph = {'from', 'to', 'conky_value'},
+  bar_graph = {'from', 'to', 'conky_value', 'max_value'},
   ring = {'center', 'radius'},
   ring_graph = {'center', 'radius', 'conky_value'},
   text = {'from', },
