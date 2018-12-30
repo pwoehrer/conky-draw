@@ -285,18 +285,18 @@ Properties marked as **required** must be defined by you. The rest have default 
 But first, some general notions on the values of properties.
 
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| If the property is a...| This is what you should know                                                                                                                       |
+| If the property is a...| this is what you should know:                                                                                                                      |
 +========================+====================================================================================================================================================+
-| point                  | Its value should be something with x and y valuesi.                                                                                                 |
-|                        | Example: ``from = {x = 100, y = 100}``                                                                                                                 |
+| point                  | Its value should be something with x and y values.                                                                                                 |
+|                        | Example: ``from = {x = 100, y = 100}``                                                                                                             |
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| color                  | Its value should be a color in hexa.                                                                                                               |
+| color                  | Its value should be a hexadecimal number, defining a color (each byte standing for red, green, and blue respectively).                             |
 |                        | Example (red): ``color = 0xFF0000``                                                                                                                |
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 | alpha level            | Its value should be a transpacency level from 0 (fully transparent) to 1 (solid, no transpacency).                                                 |
 |                        | Example: ``alpha = 0.2``                                                                                                                           |
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| angle                  | Its value should be expresed in **degrees**. Angle 0 is east, angle 90 is south, angle 180 is west, and angle 270 is north.                        |
+| angle                  | Its value should be expressed in **degrees**. Angle 0 is east, angle 90 is south, angle 180 is west, and angle 270 is north.                       |
 |                        | Example: ``start_angle = 90``                                                                                                                      |
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 | thickness              | Its value should be the thickness in pixels.                                                                                                       |
@@ -306,16 +306,31 @@ But first, some general notions on the values of properties.
 |                        | values are listed `here <http://conky.sourceforge.net/variables.html>`_.                                                                           |
 |                        | Example: ``conky_value = 'upspeedf eth0'``                                                                                                         |
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| max value              | It should be maximum possible value for the conky value used in a graph. It's needed to calculate the length of the bars in the graphs, so be sure |
+| maximum value          | It should be maximum possible value for the conky value used in a graph. It's needed to calculate the length of the bars in the graphs, so be sure |
 |                        | it's correct (for cpu usage values it's 100, for network speeds it's your top speed, etc.).                                                        |
 |                        | Example: ``max_value = 100``                                                                                                                       |
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-| critical threshold     | It should be the value at which the graph should change appearance. If you don't want that, just leave it equal to max_value to disable appearance |
-|                        | changes.                                                                                                                                           |
+| critical threshold     | It should be the value at which the graph should change appearance. If you do not want that, just leave it equal to max_value to disable           |
+|                        | appearance changes.                                                                                                                                |
 |                        | Example: ``critical_threshold = 90``                                                                                                               |
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 | boolean                | It should be either true or false, with no quotes.                                                                                                 |
 |                        | Example: ``change_color_on_critical = true``                                                                                                       |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+| text                   | A string value of any kind. There is no check on how long the string can be, so be careful.                                                        |
+|                        | Example: ``text = Temperature:``                                                                                                                   |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+| alignment              | A table containing two keys ``horizontal`` and ``vertical``. ``horizontal`` can take the values of **left** (default), **center**, and **right**.  |
+|                        | ``vertical`` takes the values of **top** (default), **middle**, and **bottom**. The  text will be positioned at the specified corners.             |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
++ font property          + Boolean ``true`` or ``false``.                                                                                                                     +
+|                        | Example: ``font_weight = true``                                                                                                                    |
+|                        |          ``font_slant = true``                                                                                                                     |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
++ radius                 + The value can be a single number or a table consisting of a major and minor diameter. The table can be spcified with or without indices.           +
+|                        | Example: ``radius = 50               -- this will draw a circle with the radius of 50 pixels``                                                     |
+|                        |          ``radius = {30, 50}         -- this will draw an ellipse with a radius of 30 pixels along the x axes and one of 50 pixels on the y axes`` |
+|                        |          ``radius = {a = 30, b = 50} -- the same as the above with conventional naming of the radii``                                              |
 +------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Now, the elements and properties
