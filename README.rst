@@ -332,6 +332,7 @@ But first, some general notions on the values of properties.
 |                        |          ``radius = {30, 50}         -- this will draw an ellipse with a radius of 30 pixels along the x axes and one of 50 pixels on the y axes`` |
 +                        +                                                                                                                                                    +
 |                        |          ``radius = {a = 30, b = 50} -- the same as the above with conventional naming of the radii``                                              |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Now, the elements and properties
 --------------------------------
