@@ -118,20 +118,26 @@ local function draw_text(display, element)
   cairo_text_extents(display, str, extents)
 
   local offset_x, offset_y
-  if element.alignment.vertical == 'top' then
-    offset_y = extents.height
-  elseif element.alignment.vertical == 'bottom' then
+  if element.alignment.vertical == 'bottom' then
     offset_y = 0
   elseif element.alignment.vertical == 'middle' then
     offset_y = extents.height / 2
+  else
+    -- if the setting is neither top, middle, or bottom default to top and print a warning
+    offset_y = extents.height
+    print("Warning: The vertical alignment value was '" .. element.alignment.vertical .. 
+        "'. It has to be one of 'top', 'middle', or 'bottom'. The default of 'top' is used."
   end
 
-  if element.alignment.horizontal == 'left' then
-    offset_x = 0
-  elseif element.alignment.horizontal == 'right' then
+  if element.alignment.horizontal == 'right' then
     offset_x = -extents.width
   elseif element.alignment.horizontal == 'center' then
     offset_x = -extents.width / 2
+  else
+    -- if the setting is neither left, center, or right default to left and print a warning
+    offset = x
+    print("Warning: The horizontal alignment value was '" .. element.alignment.horizontal .. 
+        "'. It has to be one of 'left', 'center', or 'right'. The default of 'left' is used."
   end
 
   if element.rotation_angle then
