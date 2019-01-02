@@ -19,6 +19,20 @@ local function division_by_zero(variable_table)
 end
 
 
+local function sign(value)
+  -- return the sign of value
+  if type(value) ~= 'number' then
+    error("Error: '" .. "' is not a number!", 2)
+  end
+
+  if value == 0 then
+    return 1
+  else
+    return (value / math.abs(value))
+  end
+end
+
+
 local function hexa_to_rgb(color, alpha)
   -- ugh, whish this wasn't an oneliner
   return
@@ -112,6 +126,7 @@ local function draw_text(display, element)
     error("Either 'conky_value' or 'text' must be present in the configuration of a 'draw_text' element!")
     str = "NIL"
   end
+
   str = element.prefix .. str .. element.suffix
 
   -- prepare element positioning
@@ -125,8 +140,8 @@ local function draw_text(display, element)
   else
     -- if the setting is neither top, middle, or bottom default to top and print a warning
     offset_y = extents.height
-    print("Warning: The vertical alignment value was '" .. element.alignment.vertical ..
-        "'. It has to be one of 'top', 'middle', or 'bottom'. The default of 'top' is used.")
+    -- print("Warning: The vertical alignment value was '" .. (element.alignment.vertical or 'nil') ..
+    --    "'. It has to be one of 'top', 'middle', or 'bottom'. The default of 'top' is used.")
   end
 
   if element.alignment.horizontal == 'right' then
@@ -135,9 +150,9 @@ local function draw_text(display, element)
     offset_x = -extents.width / 2
   else
     -- if the setting is neither left, center, or right default to left and print a warning
-    offset_x = extents.width
-    print("Warning: The horizontal alignment value was '" .. element.alignment.horizontal ..
-        "'. It has to be one of 'left', 'center', or 'right'. The default of 'left' is used.")
+    offset_x = 0
+    -- print("Warning: The horizontal alignment value was '" .. (element.alignment.horizontal or 'nil') ..
+    --    "'. It has to be one of 'left', 'center', or 'right'. The default of 'left' is used.")
   end
 
   if element.rotation_angle then
@@ -175,24 +190,42 @@ local function draw_line(display, element)
   local y_side = element.to.y - element.from.y  -- and the same here
   local from_x = element.from.x
   local from_y = element.from.y
+  local length = math.sqrt(x_side * x_side + y_side * y_side)
 
   -- draw line
   division_by_zero({
-    number_graduation = element.number_graduation,
-    space_between_graduation = element.space_between_graduation})
+    number_graduation = element.number_graduation
+  })
 
   cairo_set_source_rgba(display, hexa_to_rgb(element.color, element.alpha))
-  cairo_set_line_width(display, element.thickness);
+  cairo_set_line_width(display, element.thickness)
+  
+  -- calculate x and y component of space_between_graduations
+  local space_between_grad_x = element.space_between_graduation * (x_side / length)
+  local space_between_grad_y = element.space_between_graduation * (y_side / length)
+  
+  -- calculate x and y component of graduation, compensating for one less space than number graduations
+  local graduation_x = (space_between_grad_x + x_side) / element.number_graduation - space_between_grad_x
+  local graduation_y = (space_between_grad_y + y_side) / element.number_graduation - space_between_grad_y
+
+  -- I'll be honest: I have no idea what those lines of code actually did.
+  --[[
   local space_graduation_x = (x_side - x_side / element.space_between_graduation + 1) / element.number_graduation
   local space_graduation_y = (y_side - y_side / element.space_between_graduation + 1) / element.number_graduation
   local space_x = x_side / element.number_graduation - space_graduation_x
-  local space_y = y_side / element.number_graduation - space_graduation_y
+  local space_y = y_side / element.number_graduation - space_graduation_y ]]
+
+  -- move to start of line
+  cairo_move_to(display, from_x, from_y)
 
   for _ = 1, math.floor(element.number_graduation + 0.5) do
+    -- draw first graduation
+    cairo_rel_line_to(display, graduation_x, graduation_y)
+    
+    -- move to start of next graduation
+    from_x = from_x + graduation_x + space_between_grad_x
+    from_y = from_y + graduation_y + space_between_grad_y
     cairo_move_to(display, from_x, from_y)
-    from_x = from_x + space_x + space_graduation_x
-    from_y = from_y + space_y + space_graduation_y
-    cairo_rel_line_to(display, space_x, space_y)
   end
 
   cairo_stroke(display)
@@ -262,20 +295,6 @@ local function draw_bar_graph(display, element)
   bar_line.thickness = element['bar_thickness' .. critical_or_not_suffix.thickness]
 
   draw_line(display, bar_line)
-end
-
-
-local function sign(value)
-  -- return the sign of value
-  if type(value) ~= 'number' then
-    error("Error: '" .. "' is not a number!", 2)
-  end
-
-  if value == 0 then
-    return 1
-  else
-    return (value / math.abs(value))
-  end
 end
 
 
