@@ -125,8 +125,8 @@ local function draw_text(display, element)
   else
     -- if the setting is neither top, middle, or bottom default to top and print a warning
     offset_y = extents.height
-    print("Warning: The vertical alignment value was '" .. element.alignment.vertical .. 
-        "'. It has to be one of 'top', 'middle', or 'bottom'. The default of 'top' is used."
+    print("Warning: The vertical alignment value was '" .. element.alignment.vertical ..
+        "'. It has to be one of 'top', 'middle', or 'bottom'. The default of 'top' is used.")
   end
 
   if element.alignment.horizontal == 'right' then
@@ -135,9 +135,9 @@ local function draw_text(display, element)
     offset_x = -extents.width / 2
   else
     -- if the setting is neither left, center, or right default to left and print a warning
-    offset = x
-    print("Warning: The horizontal alignment value was '" .. element.alignment.horizontal .. 
-        "'. It has to be one of 'left', 'center', or 'right'. The default of 'left' is used."
+    offset_x = extents.width
+    print("Warning: The horizontal alignment value was '" .. element.alignment.horizontal ..
+        "'. It has to be one of 'left', 'center', or 'right'. The default of 'left' is used.")
   end
 
   if element.rotation_angle then
@@ -265,6 +265,20 @@ local function draw_bar_graph(display, element)
 end
 
 
+local function sign(value)
+  -- return the sign of value
+  if type(value) ~= 'number' then
+    error("Error: '" .. "' is not a number!", 2)
+  end
+
+  if value == 0 then
+    return 1
+  else
+    return (value / math.abs(value))
+  end
+end
+
+
 local function draw_ring(display, element)
   -- draw a ring or ellipse
   -- handle different types of radii
@@ -285,12 +299,12 @@ local function draw_ring(display, element)
   local start_angle, end_angle = math.rad(element.start_angle), math.rad(element.end_angle)
 
   -- direction of the ring changes the function we must call
-  local arc_drawer = cairo_arc
-  local orientation = 1
+  local length = end_angle - start_angle
 
-  if start_angle > end_angle then
+  local arc_drawer = cairo_arc
+
+  if length < 0 then
     arc_drawer = cairo_arc_negative
-    orientation = -1
   end
 
   cairo_set_source_rgba(display, hexa_to_rgb(element.color, element.alpha))
@@ -300,8 +314,10 @@ local function draw_ring(display, element)
 
   division_by_zero({number_graduation = element.number_graduation})
 
-  local rad_between_graduation = math.rad(element.angle_between_graduation)
-  local graduation_size = math.abs(end_angle - start_angle) / element.number_graduation - rad_between_graduation
+  -- I am considering ditching this for the ability to define negative space between graduations.
+  -- Probably useful for effects playing with alpha.
+  local rad_between_graduation = math.rad(element.angle_between_graduation) * sign(length)
+  local graduation_size = length / element.number_graduation - rad_between_graduation
   local current_start = start_angle
 
   -- round to the nearest graduation
@@ -315,10 +331,10 @@ local function draw_ring(display, element)
       element.center.y / ratio,
       radius.a,
       current_start,
-      current_start + graduation_size * orientation
+      current_start + graduation_size
     )
 
-    current_start = current_start + (graduation_size + rad_between_graduation) * orientation
+    current_start = current_start + graduation_size + rad_between_graduation
 
     cairo_restore(display)
     cairo_stroke(display)
