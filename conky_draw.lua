@@ -276,7 +276,6 @@ local function draw_bar_graph(display, element)
     alpha = alpha,
     thickness = thickness,
 
-    graduated = element.graduated,
     number_graduation = element.number_graduation,
     space_between_graduation = element.space_between_graduation,
   }
