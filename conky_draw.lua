@@ -199,11 +199,11 @@ local function draw_line(display, element)
 
   cairo_set_source_rgba(display, hexa_to_rgb(element.color, element.alpha))
   cairo_set_line_width(display, element.thickness)
-  
+
   -- calculate x and y component of space_between_graduations
   local space_between_grad_x = element.space_between_graduation * (x_side / length)
   local space_between_grad_y = element.space_between_graduation * (y_side / length)
-  
+
   -- calculate x and y component of graduation, compensating for one less space than number graduations
   local graduation_x = (space_between_grad_x + x_side) / element.number_graduation - space_between_grad_x
   local graduation_y = (space_between_grad_y + y_side) / element.number_graduation - space_between_grad_y
@@ -213,7 +213,8 @@ local function draw_line(display, element)
   local space_graduation_x = (x_side - x_side / element.space_between_graduation + 1) / element.number_graduation
   local space_graduation_y = (y_side - y_side / element.space_between_graduation + 1) / element.number_graduation
   local space_x = x_side / element.number_graduation - space_graduation_x
-  local space_y = y_side / element.number_graduation - space_graduation_y ]]
+  local space_y = y_side / element.number_graduation - space_graduation_y
+  ]]
 
   -- move to start of line
   cairo_move_to(display, from_x, from_y)
@@ -221,7 +222,7 @@ local function draw_line(display, element)
   for _ = 1, math.floor(element.number_graduation + 0.5) do
     -- draw first graduation
     cairo_rel_line_to(display, graduation_x, graduation_y)
-    
+
     -- move to start of next graduation
     from_x = from_x + graduation_x + space_between_grad_x
     from_y = from_y + graduation_y + space_between_grad_y
@@ -427,7 +428,6 @@ local function draw_ring_graph(display, element)
   if element.text then
     local text = defaults.text
     text.font_size = 18
-    text.suffix = '%'
     text.from = {
       x = element.center.x,
       y = element.center.y
@@ -436,6 +436,8 @@ local function draw_ring_graph(display, element)
     text.alpha = element['bar_alpha' .. critical_or_not_suffix.alpha]
     text.bold = element.text_bold or false
     text.text = value
+    text.suffix = element.suffix or text.suffix
+    text.prefix = element.prefix or text.prefix
     text.alignment = {
       vertical = 'middle',
       horizontal = 'center'
