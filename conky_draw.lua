@@ -13,7 +13,7 @@ local function division_by_zero(variable_table)
   -- handle division by zero from some user configuration
   for k, v in pairs(variable_table) do
     if v == 0 then
-      error("The value of '" .. k .. "' must be non-zero as it is used as divisor.")
+      error("The value of '" .. k .. "' must be non-zero as it is used as divisor.", 2)
     end
   end
 end
@@ -36,9 +36,9 @@ end
 local function hexa_to_rgb(color, alpha)
   -- ugh, whish this wasn't an oneliner
   return
-    ((color / 0x10000) % 0x100) / 255.,
-    ((color / 0x100) % 0x100) / 255.,
-    (color % 0x100) / 255.,
+    ((color / 0x10000) % 0x100) / 255,
+    ((color / 0x100) % 0x100) / 255,
+    (color % 0x100) / 255,
     alpha
 end
 
@@ -100,6 +100,7 @@ local function draw_text(display, element)
   -- set font appearance
   local font_slant
   local font_face
+
   if element.italic then
     font_slant = CAIRO_FONT_SLANT_ITALIC
   else
