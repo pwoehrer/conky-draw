@@ -34,7 +34,6 @@ end
 
 
 local function hexa_to_rgb(color, alpha)
-  -- ugh, whish this wasn't an oneliner
   return
     ((color / 0x10000) % 0x100) / 255,
     ((color / 0x100) % 0x100) / 255,
@@ -70,18 +69,19 @@ local function get_critical_or_not_suffix (value, threshold, change_color_on_cri
     alpha = '',
     thickness = ''
   }
+  local suffix = "_critical"
 
   if value >= threshold then
     if change_color_on_critical then
-      result.color = '_critical'
+      result.color = suffix
     end
 
     if change_alpha_on_critical then
-      result.alpha = '_critical'
+      result.alpha = suffix
     end
 
     if change_thickness_on_critical then
-      result.thickness = '_critical'
+      result.thickness = suffix
     end
   end
   return result
@@ -91,6 +91,7 @@ end
 local function draw_text(display, element)
   -- draw a string
 
+  -- define the function to get the extents of the string
   local extents = cairo_text_extents_t:create()
   tolua.takeownership(extents)
 
@@ -209,15 +210,7 @@ local function draw_line(display, element)
   local graduation_x = (space_between_grad_x + x_side) / element.number_graduation - space_between_grad_x
   local graduation_y = (space_between_grad_y + y_side) / element.number_graduation - space_between_grad_y
 
-  -- I'll be honest: I have no idea what those lines of code actually did.
-  --[[
-  local space_graduation_x = (x_side - x_side / element.space_between_graduation + 1) / element.number_graduation
-  local space_graduation_y = (y_side - y_side / element.space_between_graduation + 1) / element.number_graduation
-  local space_x = x_side / element.number_graduation - space_graduation_x
-  local space_y = y_side / element.number_graduation - space_graduation_y
-  ]]
-
-  -- move to start of line
+   -- move to start of line
   cairo_move_to(display, from_x, from_y)
 
   for _ = 1, math.floor(element.number_graduation + 0.5) do
@@ -236,6 +229,7 @@ end
 
 local function draw_bar_graph(display, element)
   -- draw a bar graph
+
   division_by_zero({max_value = element.max_value})
 
   -- get current value
@@ -262,11 +256,11 @@ local function draw_bar_graph(display, element)
 
   -- derive sensible defaults for background from elements settings
   local color = element['background_color' .. critical_or_not_suffix.color] or
-      element['bar_color' .. critical_or_not_suffix.color]
+      element['color' .. critical_or_not_suffix.color]
   local alpha = element['background_alpha' .. critical_or_not_suffix.alpha] or
-      element['bar_alpha' .. critical_or_not_suffix.alpha] / 5
+      element['alpha' .. critical_or_not_suffix.alpha] / 5
   local thickness = element['background_thickness' .. critical_or_not_suffix.thickness] or
-      element['bar_thickness' .. critical_or_not_suffix.thickness]
+      element['thickness' .. critical_or_not_suffix.thickness]
 
   -- background line (full graph)
   local background_line = {
@@ -291,9 +285,9 @@ local function draw_bar_graph(display, element)
   bar_line.to = {x = element.from.x + bar_x_side, y = element.from.y + bar_y_side}
   bar_line.number_graduation = math.max(element.number_graduation * (value / element.max_value), 1)
 
-  bar_line.color = element['bar_color' .. critical_or_not_suffix.color]
-  bar_line.alpha = element['bar_alpha' .. critical_or_not_suffix.alpha]
-  bar_line.thickness = element['bar_thickness' .. critical_or_not_suffix.thickness]
+  bar_line.color = element['color' .. critical_or_not_suffix.color]
+  bar_line.alpha = element['alpha' .. critical_or_not_suffix.alpha]
+  bar_line.thickness = element['thickness' .. critical_or_not_suffix.thickness]
 
   draw_line(display, bar_line)
 end
@@ -301,6 +295,7 @@ end
 
 local function draw_ring(display, element)
   -- draw a ring or ellipse
+
   -- handle different types of radii
   local radius
   if type(element.radius) == "table" then
@@ -336,7 +331,7 @@ local function draw_ring(display, element)
 
   -- I am considering ditching this for the ability to define negative space between graduations.
   -- Probably useful for effects playing with alpha.
-  local rad_between_graduation = math.rad(element.angle_between_graduation) * sign(length)
+  local rad_between_graduation = math.rad(element.space_between_graduation) * sign(length)
   local graduation_size = length / element.number_graduation - rad_between_graduation
   local current_start = start_angle
 
@@ -364,6 +359,7 @@ end
 
 local function draw_ring_graph(display, element)
   -- draw a ring graph
+
   division_by_zero({max_value = element.max_value})
 
   -- get current value
@@ -391,11 +387,11 @@ local function draw_ring_graph(display, element)
   -- background ring
   -- derive sensible defaults for background from bar values
   local color = element['background_color' .. critical_or_not_suffix.color] or
-      element['bar_color' .. critical_or_not_suffix.color]
+      element['color' .. critical_or_not_suffix.color]
   local alpha = element['background_alpha' .. critical_or_not_suffix.alpha] or
-      element['bar_alpha' .. critical_or_not_suffix.alpha] / 5
+      element['alpha' .. critical_or_not_suffix.alpha] / 5
   local thickness = element['background_thickness' .. critical_or_not_suffix.thickness] or
-      element['bar_thickness' .. critical_or_not_suffix.thickness]
+      element['thickness' .. critical_or_not_suffix.thickness]
 
   local background_ring = {
     center = element.center,
@@ -405,7 +401,7 @@ local function draw_ring_graph(display, element)
     end_angle = element.end_angle,
 
     number_graduation = element.number_graduation,
-    angle_between_graduation = element.angle_between_graduation,
+    space_between_graduation = element.space_between_graduation,
 
     color = color,
     alpha = alpha,
@@ -418,9 +414,9 @@ local function draw_ring_graph(display, element)
   bar_ring.end_angle = element.start_angle + bar_degrees
   bar_ring.number_graduation = math.max(element.number_graduation * (bar_degrees / degrees), 1)
 
-  bar_ring.color = element['bar_color' .. critical_or_not_suffix.color]
-  bar_ring.alpha = element['bar_alpha' .. critical_or_not_suffix.alpha]
-  bar_ring.thickness = element['bar_thickness' .. critical_or_not_suffix.thickness]
+  bar_ring.color = element['color' .. critical_or_not_suffix.color]
+  bar_ring.alpha = element['alpha' .. critical_or_not_suffix.alpha]
+  bar_ring.thickness = element['thickness' .. critical_or_not_suffix.thickness]
 
   draw_ring(display, bar_ring)
 
@@ -432,8 +428,8 @@ local function draw_ring_graph(display, element)
       x = element.center.x,
       y = element.center.y
     }
-    text.color = element['bar_color' .. critical_or_not_suffix.color]
-    text.alpha = element['bar_alpha' .. critical_or_not_suffix.alpha]
+    text.color = element['color' .. critical_or_not_suffix.color]
+    text.alpha = element['alpha' .. critical_or_not_suffix.alpha]
     text.bold = element.text_bold or false
     text.text = value
     text.suffix = element.suffix or text.suffix
@@ -456,104 +452,6 @@ local requirements = {
   ring_graph = {'center', 'radius', 'conky_value'},
   text = {'from', },
   clock = {},
-}
-
-
--- Default values for properties that can have a default value
-defaults = {
-  bar_graph = {
-    max_value = 100.,
-    critical_threshold = 90.,
-
-    bar_color = 0x00FF6E,
-    bar_alpha = 1.0,
-    bar_thickness = 5,
-
-    bar_color_critical = 0xFA002E,
-    bar_alpha_critical = 1.0,
-    bar_thickness_critical = 5,
-
-    change_color_on_critical = true,
-    change_alpha_on_critical = false,
-    change_thickness_on_critical = false,
-
-    number_graduation = 1,
-    space_between_graduation = 0,
-
-    draw_function = draw_bar_graph,
-  },
-  ring_graph = {
-    max_value = 100.,
-    critical_threshold = 90.,
-
-    bar_color = 0x00FF6E,
-    bar_alpha = 1.0,
-    bar_thickness = 5,
-
-    bar_color_critical = 0xFA002E,
-    bar_alpha_critical = 1.0,
-    bar_thickness_critical = 5,
-
-    change_color_on_critical = true,
-    change_alpha_on_critical = false,
-    change_thickness_on_critical = false,
-
-    start_angle = 0,
-    end_angle = 360,
-
-    number_graduation = 1,
-    angle_between_graduation = 0,
-
-    text = false,
-    text_suffix = '',
-    text_bold = true,
-
-    draw_function = draw_ring_graph,
-  },
-  line = {
-    color = 0x00FF6E,
-    alpha = 0.2,
-    thickness = 5,
-
-    graduated = false,
-    number_graduation = 1,
-    space_between_graduation = 0,
-
-    draw_function = draw_line,
-  },
-  ring = {
-    color = 0x00FF6E,
-    alpha = 0.2,
-    thickness = 5,
-
-    start_angle = 0,
-    end_angle = 360,
-
-    number_graduation = 1,
-    angle_between_graduation = 0,
-
-    draw_function = draw_ring,
-  },
-  text = {
-    color = 0x00FF6E,
-    alpha = 1.0,
-
-    rotation_angle = 0,
-    alignment = {
-      vertical = 'top',
-      horizontal = 'left'
-    },
-
-    font = 'Noto Sans',
-    font_size = 12,
-    bold = false,
-    italic = false,
-
-    prefix = '',
-    suffix = '',
-
-    draw_function = draw_text,
-  },
 }
 
 
@@ -584,26 +482,110 @@ local function check_requirements(elements)
   end
 end
 
+-- Default values for properties that can have a default value
+local function join_defaults(...)
+  local new = {}
 
-local function fill_defaults(elements)
-  -- fill each each element with the missing values, using the defaults
-  for _, element in pairs(elements) do
-    -- find the defaults for that element kind
-    local kind_defaults = defaults[element.kind]
-
-    -- only if there are defined defaults for that element kind
-
-    if  kind_defaults ~= nil then
-      -- fill the element with the defaults (for the properties without
-      -- value)
-
-      for key, value in pairs(kind_defaults) do
-        if element[key] == nil then
-          element[key] = value
-        end
-      end
+  for _, v in pairs({...}) do
+    for kk, vv in pairs(v) do
+      new[kk] = vv
     end
   end
+
+  return new
+end
+
+
+local color_defaults = {
+  color = 0x00FF6E,
+  alpha = 1.0,
+}
+
+local base_defaults = {
+  thickness = 5,
+  number_graduation = 1,
+  space_between_graduation = 0,
+}
+
+local bar_defaults = {
+  max_value = 100,
+  min_value = 0,
+  critical_threshold = 90,
+  change_color_on_critical = true,
+  change_alpha_on_critical = false,
+  change_thickness_on_critical = false,
+  color_critical = 0xF00000,
+  alpha_critical = 1.0,
+  thickness_critical = 5,
+}
+
+defaults = {
+  bar_graph = join_defaults(
+    color_defaults,
+    base_defaults,
+    bar_defaults, {
+      draw_function = draw_bar_graph,
+    }
+  ),
+  ring_graph = join_defaults(
+    color_defaults,
+    base_defaults,
+    bar_defaults, {
+      text = false,
+      text_suffix = '',
+      text_bold = true,
+
+      draw_function = draw_ring_graph,
+    }
+  ),
+  line = join_defaults(
+    color_defaults,
+    base_defaults, {
+      draw_function = draw_line,
+    }
+  ),
+  ring = join_defaults(
+    color_defaults,
+    base_defaults, {
+      start_angle = 0,
+      end_angle = 360,
+
+      draw_function = draw_ring,
+    }
+  ),
+  text = join_defaults(
+    color_defaults, {
+      rotation_angle = 0,
+      alignment = {
+        vertical = 'top',
+        horizontal = 'left'
+      },
+
+      font = 'Noto Sans',
+      font_size = 12,
+      bold = false,
+      italic = false,
+
+      prefix = '',
+      suffix = '',
+
+      draw_function = draw_text,
+    }
+  ),
+}
+
+
+local function set_defaults(element)
+  -- works on global variable element, so tehre is no need to return element
+  local kind_defaults = defaults[element.kind]
+
+  if kind_defaults ~= nil then
+    for key, value in pairs(kind_defaults) do
+      element[key] = element[key] or value
+    end
+  end
+
+  return element
 end
 
 
@@ -613,7 +595,6 @@ function conky_main()
   end
 
   check_requirements(elements)
-  fill_defaults(elements)
 
   local surface = cairo_xlib_surface_create(
     conky_window.display,
@@ -628,6 +609,7 @@ function conky_main()
   if tonumber(conky_parse('${updates}')) > 3 then
 
     for _, element in pairs(elements) do
+      element = set_defaults(element)
       element.draw_function(display, element)
     end
   end
