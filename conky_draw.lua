@@ -35,10 +35,10 @@ end
 
 local function hexa_to_rgb(color, alpha)
   return
-    color >> 16,
-    (color & 0x00ff00) >> 8,
-    color & 0x0000ff,
-    alpha
+    ((color / 0x10000) % 0x100) / 255,
+    ((color / 0x100) % 0x100) / 255,
+    (color % 0x100) / 255,
+	alpha
 end
 
 
